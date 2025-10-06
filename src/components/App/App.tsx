@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import SearchBar from "../SearchBar/SearchBar";
 import css from "./App.module.css";
-import {movieService} from "../../services/movieService";
+import { movieService } from "../../services/movieService";
 import type { Movie } from "../../types/movie";
 import toast, { Toaster } from "react-hot-toast";
 import Loader from "../Loader/Loader";
@@ -13,9 +13,7 @@ import ReactPaginate from "react-paginate";
 
 function App() {
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [modalData, setModalData] = useState<Movie | null>(null);
-  const [movies, setMovies] = useState<Movie[] | []>([]);
   const [queryText, setQueryText] = useState<string>("");
 
   const { data, isFetching, isError, status } = useQuery({
@@ -26,17 +24,8 @@ function App() {
     placeholderData: (prev) => prev,
   });
   useEffect(() => {
-    setMovies([]);
-    setPage(1);
-  }, [queryText]);
-  useEffect(() => {
-    if (status === "success" && data.total_results < 1) {
+    if (status === "success" && data && data.total_results < 1) {
       toast.error("No movies found for your request.");
-    }
-
-    if (status === "success" && data.total_results > 0) {
-      setMovies(data.results);
-      setTotalPages(data.total_pages);
     }
   }, [status, data]);
   const closeModal = () => {
@@ -46,15 +35,16 @@ function App() {
     setModalData(mov);
   };
   const onSubmit = (value: string) => {
+    setPage(1);
     setQueryText(value);
   };
   return (
     <>
       <SearchBar onSubmit={onSubmit} />
       <Toaster />
-      {totalPages > 1 && (
+      {queryText !== "" && data && data?.total_pages > 1 && (
         <ReactPaginate
-          pageCount={totalPages}
+          pageCount={data?.total_pages}
           pageRangeDisplayed={5}
           marginPagesDisplayed={1}
           onPageChange={({ selected }) => setPage(selected + 1)}
@@ -65,9 +55,11 @@ function App() {
           previousLabel="←"
         />
       )}
-      {movies.length > 0 && <MovieGrid movies={movies} onSelect={onSelect} />}
-      {isFetching && <Loader />}
-      {isError && <ErrorMessage />}
+      {queryText !== "" && data && data?.total_results > 0 && (
+        <MovieGrid movies={data?.results} onSelect={onSelect} />
+      )}
+      {queryText !== "" && isFetching && <Loader />}
+      {queryText !== "" && isError && <ErrorMessage />}
       {modalData && <MovieModal movie={modalData} onClose={closeModal} />}
     </>
   );
