@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Movie } from "../types/movie";
+import type { Movie } from "../../types/movie";
 
 export interface MovieResponse {
   page: number;
@@ -8,9 +8,9 @@ export interface MovieResponse {
   total_results: number;
 }
 
-export default async function movieService(value: string, page: number): Promise<MovieResponse>{
+export async function movieService(value: string, page: number): Promise<MovieResponse>{
     const myKey = import.meta.env.VITE_API_KEY;
-    const movies= await axios.get('https://api.themoviedb.org/3/search/movie',{
+    const movies= await axios.get<MovieResponse>('https://api.themoviedb.org/3/search/movie',{
   params: {
     query: value,
     page: page
