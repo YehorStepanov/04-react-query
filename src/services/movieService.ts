@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Movie } from "../../types/movie";
+import type { Movie } from "../types/movie";
 
 export interface MovieResponse {
   page: number;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import SearchBar from "../SearchBar/SearchBar";
 import css from "./App.module.css";
-import {movieService} from "../../services/movie/movieService";
+import {movieService} from "../../services/movieService";
 import type { Movie } from "../../types/movie";
 import toast, { Toaster } from "react-hot-toast";
 import Loader from "../Loader/Loader";
